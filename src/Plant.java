@@ -1,14 +1,18 @@
-// package Plant;
-// import OperatingSystems.Orange;
 
 public class Plant implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
+    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
+    public volatile boolean betterGuitarPlayer = false;
+    public static volatile boolean redGreenColorBlind = true;
 
-    private static final int NUM_PLANTS = 10001;
+    private static final int NUM_PLANTS = 2;
 
     public static void main(String[] args) {
         // Startup the plants
+//        if(redGreenColorBlind){
+//            System.out.println("Red Green Colorblind");
+//        }
         Plant[] plants = new Plant[NUM_PLANTS];
         for (int i = 0; i < NUM_PLANTS; i++) {
             plants[i] = new Plant(1);
