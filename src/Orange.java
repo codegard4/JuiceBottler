@@ -1,5 +1,8 @@
 public class Orange {
     public enum State {
+
+        // Peeled and Squeezed take roughly twice as long as Fetched and Bottled so they will be bottlenecks in our plant
+
         Fetched(15),
         Peeled(38),
         Squeezed(29),

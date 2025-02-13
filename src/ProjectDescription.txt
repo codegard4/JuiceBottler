@@ -1,0 +1,31 @@
+JuiceBottler	(as	described	in	class)
+o Oranges	are	picked	up,	and	take	a	finite	amount	of	time	to
+§ Fetch
+§ Peel
+§ Juice
+§ Bottle
+§ Complete	(optional	QA	step)
+- Requirements
+o Must	have	AT	LEAST	two	Plants	running	(data	parallelization)
+o Must	have	multiple	Workers	per	plant	operating	on	the	Oranges	(task
+parallelization)
+o Final	project	must	be	committed	and	pushed	up	to	GitHub
+- Hints
+o There	should	be	AT	LEAST 5	threads	running	in	a	completed	project
+§ Main	thread
+• spawns	off	the	Plants
+• print	out	summary	information	for	all	processes
+o fetched
+o processed
+o bottles
+o wasted
+§ Plant	1	(Spawns	off	Workers)
+• Plant	1	- Worker	1	– (Could	also	be	the	same	as	Plant	1)
+• Plant	1	- Worker	2
+§ Plant	2
+• Plant	2	- Worker	1	(Could	also	be	the	same	as	Plant	2)
+• Plant	2	- Worker	2
+o Identify	critical	sections,	shared	data	structures
+- Grading	criteria	– See	the	Assignments	and	Labs document	on	Moodle
+o Extra	Credit
+§ Using	ANT	for	building	and	running	+5	point

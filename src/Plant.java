@@ -1,18 +1,15 @@
-
 public class Plant implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
-    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
-    public volatile boolean betterGuitarPlayer = false;
-    public static volatile boolean redGreenColorBlind = true;
+    //    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
+//    public volatile boolean betterGuitarPlayer = false;
+//    public static volatile boolean redGreenColorBlind = true;
+    private static final int NUM_WORKERS = 2;
+    private static final int NUM_PLANTS = 3;
 
-    private static final int NUM_PLANTS = 2;
 
     public static void main(String[] args) {
-        // Startup the plants
-//        if(redGreenColorBlind){
-//            System.out.println("Red Green Colorblind");
-//        }
+
         Plant[] plants = new Plant[NUM_PLANTS];
         for (int i = 0; i < NUM_PLANTS; i++) {
             plants[i] = new Plant(1);
@@ -43,7 +40,7 @@ public class Plant implements Runnable {
         }
         System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
         System.out.println("Created " + totalBottles +
-                           ", wasted " + totalWasted + " oranges");
+                "bottles, wasted " + totalWasted + " oranges");
     }
 
     private static void delay(long time, String errMsg) {
@@ -57,21 +54,29 @@ public class Plant implements Runnable {
 
     public final int ORANGES_PER_BOTTLE = 3;
 
-    private final Thread thread;
+    // each thread represents 1 worker completing their juice bottling tasks
+    private final Thread[] threads;
     private int orangesProvided;
     private int orangesProcessed;
+    private int workers;
     private volatile boolean timeToWork; // ensures that the value is written when written and read when read -- only needed across threads
     // if the value is modified within a thread the value is stored in a thread's cache and not written to main memory
 
     Plant(int threadNum) {
+        threads = new Thread[NUM_WORKERS];
         orangesProvided = 0;
         orangesProcessed = 0;
-        thread = new Thread(this, "Plant[" + threadNum + "]");
+        // initialize each worker (thread)
+        for (int i = 0; i < NUM_WORKERS; i++) {
+            threads[i] = new Thread(this, "Plant[" + threadNum + "]");
+        }
     }
 
     public void startPlant() {
         timeToWork = true;
-        thread.start();
+        // start each worker on their juice bottling tasks
+        for(Thread thread: threads){
+        thread.start();}
     }
 
     public void stopPlant() {
@@ -79,11 +84,13 @@ public class Plant implements Runnable {
     }
 
     public void waitToStop() {
+        // stop each thread
+        for(Thread thread: threads){
         try {
             thread.join();
         } catch (InterruptedException e) {
             System.err.println(thread.getName() + " stop malfunction");
-        }
+        }}
     }
 
     public void run() {
@@ -93,7 +100,7 @@ public class Plant implements Runnable {
             orangesProvided++;
             System.out.print(".");
         }
-        System.out.println("");
+        System.out.println();
         System.out.println(Thread.currentThread().getName() + " Done");
     }
 
