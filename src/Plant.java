@@ -1,3 +1,4 @@
+
 public class Plant implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
@@ -12,7 +13,7 @@ public class Plant implements Runnable {
 
         Plant[] plants = new Plant[NUM_PLANTS];
         for (int i = 0; i < NUM_PLANTS; i++) {
-            plants[i] = new Plant(1);
+            plants[i] = new Plant(i);
             plants[i].startPlant();
         }
 
@@ -40,7 +41,7 @@ public class Plant implements Runnable {
         }
         System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
         System.out.println("Created " + totalBottles +
-                "bottles, wasted " + totalWasted + " oranges");
+                " bottles, wasted " + totalWasted + " oranges");
     }
 
     private static void delay(long time, String errMsg) {
@@ -68,7 +69,8 @@ public class Plant implements Runnable {
         orangesProcessed = 0;
         // initialize each worker (thread)
         for (int i = 0; i < NUM_WORKERS; i++) {
-            threads[i] = new Thread(this, "Plant[" + threadNum + "]");
+            System.out.println("Creating thread " + i);
+            threads[i] = new Thread(this, "Plant[" + (threadNum+1) + "] Worker[" + (i+1) + "]");
         }
     }
 

@@ -1,9 +1,25 @@
 <project name="Plant" default="run" basedir=".">
-<!--  set global properties for this build  -->
+    <!-- Set global properties -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="bin"/>
 
+    <!-- Clean previous build -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
 
-<target name="run">
-    <java classname="src/Plant.java" fork="true"/>
-</target>
+    <!-- Compile source files -->
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    </target>
 
+    <!-- Run the program -->
+    <target name="run" depends="compile">
+        <java classname="Plant" fork="true">
+            <classpath>
+                <pathelement location="${build.dir}"/>
+            </classpath>
+        </java>
+    </target>
 </project>
