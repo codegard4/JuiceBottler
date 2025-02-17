@@ -3,8 +3,8 @@ public class Plant implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
     //    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
-//    public volatile boolean betterGuitarPlayer = false;
-//    public static volatile boolean redGreenColorBlind = true;
+    //    public volatile boolean betterGuitarPlayer = false;
+    //    public static volatile boolean redGreenColorBlind = true;
     private static final int NUM_WORKERS = 2;
     private static final int NUM_PLANTS = 3;
 
@@ -69,7 +69,6 @@ public class Plant implements Runnable {
         orangesProcessed = 0;
         // initialize each worker (thread)
         for (int i = 0; i < NUM_WORKERS; i++) {
-            System.out.println("Creating thread " + i);
             threads[i] = new Thread(this, "Plant[" + (threadNum+1) + "] Worker[" + (i+1) + "]");
         }
     }
@@ -96,7 +95,7 @@ public class Plant implements Runnable {
     }
 
     public void run() {
-        System.out.print(Thread.currentThread().getName() + " Processing oranges");
+        System.out.println(Thread.currentThread().getName() + " Processing oranges");
         while (timeToWork) {
             processEntireOrange(new Orange());
             orangesProvided++;
