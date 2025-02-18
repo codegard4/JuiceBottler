@@ -8,7 +8,7 @@ public class Plant implements Runnable {
     //    public volatile boolean betterGuitarPlayer = false;
     //    public static volatile boolean redGreenColorBlind = true;
 
-    private static final int NUM_PLANTS = 1;
+    private static final int NUM_PLANTS = 6;
     private static final int NUM_WORKERS = 6; // THIS MUST BE AT LEAST 4 WORKERS
 
     private final BlockingQueue<Orange> fetchMailbox = new LinkedBlockingQueue<>();
@@ -50,6 +50,7 @@ public class Plant implements Runnable {
             totalBottles += p.getBottles();
             totalWasted += p.getWaste();
         }
+        delay(50, "Waiting to summarize results");
         System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
         System.out.println();
         System.out.println("Created " + totalBottles +
