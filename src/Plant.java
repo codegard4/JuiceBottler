@@ -1,3 +1,6 @@
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Plant implements Runnable {
     // How long do we want to run the juice processing
@@ -8,15 +11,17 @@ public class Plant implements Runnable {
 
     private static final int NUM_PLANTS = 3;
 
-    private final BlockingMailbox fetchMailbox = new BlockingMailbox();
-    private final BlockingMailbox peelMailbox = new BlockingMailbox();
-    private final BlockingMailbox squeezeMailbox = new BlockingMailbox();
-    private final BlockingMailbox bottleMailbox = new BlockingMailbox();
-    private final BlockingMailbox processedMailbox = new BlockingMailbox();
+    private final BlockingQueue<Orange> fetchMailbox = new LinkedBlockingQueue<Orange>();
+    private final BlockingQueue<Orange> peelMailbox = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Orange> squeezeMailbox = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Orange> bottleMailbox = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Orange> processedMailbox = new LinkedBlockingQueue<>();
 
     private final Worker fetchWorker;
     private final Worker peelWorker;
+    private final Worker peelWorker2;
     private final Worker squeezeWorker;
+    private final Worker squeezeWorker2;
     private final Worker bottleWorker;
 
 
@@ -35,9 +40,9 @@ public class Plant implements Runnable {
         for (Plant p : plants) {
             p.stopPlant();
         }
-//        for (Plant p : plants) {
-//            p.waitToStop();
-//        }
+        for (Plant p : plants) {
+            p.waitToStop();
+        }
 
         // Summarize the results
         int totalProvided = 0;
@@ -76,36 +81,41 @@ public class Plant implements Runnable {
     Plant(int threadNum) {
         orangesProvided = 0;
         orangesProcessed = 0;
-        // initialize each worker (thread)
+        // initialize each worker
         thread = new Thread(this, "Plant[" + (threadNum + 1) + "]");
-        fetchWorker = new Worker(threadNum, "Fetch", fetchMailbox, peelMailbox);
-        peelWorker = new Worker(threadNum, "Peel", peelMailbox, bottleMailbox);
-        squeezeWorker = new Worker(threadNum, "Squeeze", squeezeMailbox, bottleMailbox);
-        bottleWorker = new Worker(threadNum, "Bottle", bottleMailbox, processedMailbox);
+        fetchWorker = new Worker("Fetch", fetchMailbox, peelMailbox);
+        peelWorker = new Worker("Peel", peelMailbox, bottleMailbox);
+        peelWorker2 = new Worker("Peel2", peelMailbox, bottleMailbox);
+        squeezeWorker = new Worker("Squeeze", squeezeMailbox, bottleMailbox);
+        squeezeWorker2 = new Worker("Squeeze2", squeezeMailbox, bottleMailbox);
+        bottleWorker = new Worker("Bottle", bottleMailbox, processedMailbox);
     }
 
     public void startPlant() {
+        // start all the workers and the main plant thread
         timeToWork = true;
         thread.start();
         fetchWorker.startWork();
         peelWorker.startWork();
+        peelWorker2.startWork();
         squeezeWorker.startWork();
+        squeezeWorker2.startWork();
         bottleWorker.startWork();
     }
 
 
     public void stopPlant() {
-        System.out.println("Stopping Plant");
+        // stop all the workers
         timeToWork = false;
         fetchWorker.stopWork();
         peelWorker.stopWork();
+        peelWorker2.stopWork();
         squeezeWorker.stopWork();
+        squeezeWorker2.stopWork();
         bottleWorker.stopWork();
-        System.out.println("Plant stopped");
     }
 
     public void waitToStop() {
-
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -117,10 +127,16 @@ public class Plant implements Runnable {
         System.out.println(Thread.currentThread().getName() + " Processing oranges");
         while (timeToWork) {
             // start a new orange by putting it in the fetchMailbox
+            try {
                 Orange orange = new Orange();
-                fetchMailbox.put(orange);
+                // since the minimum amount of time for a worker to fetch an orange is 15ms we need to wait that long
+                // to put an orange in the queue.
+                thread.sleep(15);
+                fetchMailbox.add(orange);
                 orangesProvided++;
-                System.out.print(".");
+//                System.out.print(".");
+            } catch (InterruptedException ignored) {
+            }
         }
         System.out.println();
         System.out.println(Thread.currentThread().getName() + " Done");
@@ -131,8 +147,8 @@ public class Plant implements Runnable {
     }
 
     public int getProcessedOranges() {
-        while(!processedMailbox.isEmpty()) {
-            processedMailbox.get();
+        while (!processedMailbox.isEmpty()) {
+            processedMailbox.remove();
             orangesProcessed++;
         }
         return orangesProcessed;
