@@ -5,8 +5,19 @@ public class Plant implements Runnable {
     //    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
     //    public volatile boolean betterGuitarPlayer = false;
     //    public static volatile boolean redGreenColorBlind = true;
-    private static final int NUM_WORKERS = 1;
+
     private static final int NUM_PLANTS = 3;
+
+    private final BlockingMailbox fetchMailbox = new BlockingMailbox();
+    private final BlockingMailbox peelMailbox = new BlockingMailbox();
+    private final BlockingMailbox squeezeMailbox = new BlockingMailbox();
+    private final BlockingMailbox bottleMailbox = new BlockingMailbox();
+    private final BlockingMailbox processedMailbox = new BlockingMailbox();
+
+    private final Worker fetchWorker;
+    private final Worker peelWorker;
+    private final Worker squeezeWorker;
+    private final Worker bottleWorker;
 
 
     public static void main(String[] args) {
@@ -24,9 +35,9 @@ public class Plant implements Runnable {
         for (Plant p : plants) {
             p.stopPlant();
         }
-        for (Plant p : plants) {
-            p.waitToStop();
-        }
+//        for (Plant p : plants) {
+//            p.waitToStop();
+//        }
 
         // Summarize the results
         int totalProvided = 0;
@@ -58,8 +69,7 @@ public class Plant implements Runnable {
     // each thread represents 1 worker completing their juice bottling tasks
     private final Thread thread;
     private int orangesProvided;
-    private int orangesProcessed;
-    private Worker[] workers = new Worker[NUM_WORKERS * 7]; // workers come in "teams" of 7
+    private int orangesProcessed;// workers come in "teams" of 7
     private volatile boolean timeToWork; // ensures that the value is written when written and read when read -- only needed across threads
     // if the value is modified within a thread the value is stored in a thread's cache and not written to main memory
 
@@ -68,26 +78,30 @@ public class Plant implements Runnable {
         orangesProcessed = 0;
         // initialize each worker (thread)
         thread = new Thread(this, "Plant[" + (threadNum + 1) + "]");
-        for (int i = 0; i < NUM_WORKERS; i++) {
-            workers[i] = new Worker(i);
-        }
+        fetchWorker = new Worker(threadNum, "Fetch", fetchMailbox, peelMailbox);
+        peelWorker = new Worker(threadNum, "Peel", peelMailbox, bottleMailbox);
+        squeezeWorker = new Worker(threadNum, "Squeeze", squeezeMailbox, bottleMailbox);
+        bottleWorker = new Worker(threadNum, "Bottle", bottleMailbox, processedMailbox);
     }
 
     public void startPlant() {
         timeToWork = true;
         thread.start();
-        for (Worker w : workers) {
-            w.startWork();
-        }
+        fetchWorker.startWork();
+        peelWorker.startWork();
+        squeezeWorker.startWork();
+        bottleWorker.startWork();
     }
 
 
     public void stopPlant() {
-        for (Worker w : workers) {
-            w.stopWork();
-        }
-
+        System.out.println("Stopping Plant");
         timeToWork = false;
+        fetchWorker.stopWork();
+        peelWorker.stopWork();
+        squeezeWorker.stopWork();
+        bottleWorker.stopWork();
+        System.out.println("Plant stopped");
     }
 
     public void waitToStop() {
@@ -102,13 +116,11 @@ public class Plant implements Runnable {
     public void run() {
         System.out.println(Thread.currentThread().getName() + " Processing oranges");
         while (timeToWork) {
-            for (Worker w : workers) {
-                BlockingMailbox mailbox = new BlockingMailbox();
-                mailbox.put(new Orange());
-
+            // start a new orange by putting it in the fetchMailbox
+                Orange orange = new Orange();
+                fetchMailbox.put(orange);
                 orangesProvided++;
                 System.out.print(".");
-            }
         }
         System.out.println();
         System.out.println(Thread.currentThread().getName() + " Done");
@@ -119,14 +131,18 @@ public class Plant implements Runnable {
     }
 
     public int getProcessedOranges() {
+        while(!processedMailbox.isEmpty()) {
+            processedMailbox.get();
+            orangesProcessed++;
+        }
         return orangesProcessed;
     }
 
     public int getBottles() {
-        return orangesProcessed / ORANGES_PER_BOTTLE;
+        return getProcessedOranges() / ORANGES_PER_BOTTLE;
     }
 
     public int getWaste() {
-        return orangesProcessed % ORANGES_PER_BOTTLE;
+        return getProcessedOranges() % ORANGES_PER_BOTTLE;
     }
 }
