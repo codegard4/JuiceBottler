@@ -43,8 +43,8 @@ public class Orange {
         if (state == State.Processed) {
             throw new IllegalStateException("This orange has already been processed");
         }
-        doWork();
         state = state.getNext();
+        doWork();
     }
 
     private void doWork() {

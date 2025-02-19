@@ -4,9 +4,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Plant implements Runnable {
     // How long do we want to run the juice processing
     public static final long PROCESSING_TIME = 5 * 1000;
-    //    private static volatile boolean wearingFuzzyPinkBunnySlippers = false;
-    //    public volatile boolean betterGuitarPlayer = false;
-    //    public static volatile boolean redGreenColorBlind = true;
 
     private static final int NUM_PLANTS = 6;
     private static final int NUM_WORKERS = 6; // THIS MUST BE AT LEAST 4 WORKERS
