@@ -1,6 +1,7 @@
 @startuml
 
-skin rose
+skinparam classAttributeIconSize 10
+
 class Orange {
     - state: State
     + Orange()
@@ -25,6 +26,7 @@ class Worker {
     - timeToWork: boolean
     + Worker(job: String, orangesToProcess: BlockingQueue<Orange>, orangesProcessed: BlockingQueue<Orange>)
     + startWork(): void
+    + waitToStop(): void
     + stopWork(): void
     + run(): void
 }
