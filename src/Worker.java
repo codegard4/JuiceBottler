@@ -51,8 +51,9 @@ public class Worker implements Runnable {
 
     /**
      * Take an orange from the queue of oranges to process if there are oranges and process it. Put the processed orange in the output queue
+     * Do not grab the same orange as another worker with the same process
      */
-    synchronized public void run() {
+    public synchronized void run() {
         while (timeToWork) {
 //            System.out.println(job + "ing Being done");
             try {

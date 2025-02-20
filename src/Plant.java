@@ -60,7 +60,8 @@ public class Plant implements Runnable {
         }
         // add a 1 second delay so that the results are neatly summarized at the bottom of the output
         delay(100, "Waiting to summarize results");
-        System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
+        System.out.println("Total fetched oranges: " + totalProvided);
+        System.out.println("Total processed oranges: " + totalProcessed);
         System.out.println();
         System.out.println("Created " + totalBottles + " bottles, wasted " + totalWasted + " oranges");
         System.out.println();
@@ -175,7 +176,7 @@ public class Plant implements Runnable {
      *
      * @return number of processed oranges
      */
-    public int getProcessedOranges() {
+    public synchronized int getProcessedOranges() {
         // count the number of processed oranges in our queue
         // yes, this will remove all of the oranges, but orangesProcessed saves it so we either count oranges in the queue
         // OR we already counted all the oranges (or no oranges were processed) and we return orangesProcessed

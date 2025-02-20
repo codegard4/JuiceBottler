@@ -1,0 +1,64 @@
+@startuml
+
+skin rose
+class Orange {
+    - state: State
+    + Orange()
+    + getState(): State
+    + runProcess(): void
+    - doWork(): void
+}
+
+enum State {
+    Fetched
+    Peeled
+    Squeezed
+    Bottled
+    Processed
+    + getNext(): State
+}
+
+class Worker {
+    - thread: Thread
+    - orangesToProcess: BlockingQueue<Orange>
+    - orangesProcessed: BlockingQueue<Orange>
+    - timeToWork: boolean
+    + Worker(job: String, orangesToProcess: BlockingQueue<Orange>, orangesProcessed: BlockingQueue<Orange>)
+    + startWork(): void
+    + stopWork(): void
+    + run(): void
+}
+
+class Plant {
+    - PROCESSING_TIME: long
+    - NUM_PLANTS: int
+    - NUM_WORKERS: int
+    - fetchQueue: BlockingQueue<Orange>
+    - peelQueue: BlockingQueue<Orange>
+    - squeezeQueue: BlockingQueue<Orange>
+    - bottleQueue: BlockingQueue<Orange>
+    - processedQueue: BlockingQueue<Orange>
+    - workers: Worker[]
+    - thread: Thread
+    - orangesProvided: int
+    - orangesProcessed: int
+    - timeToWork: boolean
+    - jobs: String[]
+    - inputQueues: BlockingQueue<Orange>[]
+    - outputQueues: BlockingQueue<Orange>[]
+    + Plant(threadNum: int)
+    + startPlant(): void
+    + stopPlant(): void
+    + waitToStop(): void
+    + run(): void
+    + getProvidedOranges(): int
+    + getProcessedOranges(): int
+    + getBottles(): int
+    + getWaste(): int
+}
+Orange "1" --> "*" Worker : processed by
+Worker "1" --> "*" Plant : belongs to
+Plant "1" --> "*" Worker : spawns
+Plant "1" --> "*" Orange : processes
+
+@enduml

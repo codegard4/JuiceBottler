@@ -2,7 +2,6 @@
     <!-- Set global properties -->
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="bin"/>
-
     <!-- Clean previous build -->
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -11,7 +10,8 @@
     <!-- Compile source files -->
     <target name="compile">
         <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+<!--        The includeantruntime parameter was from stack overflow: https://stackoverflow.com/questions/5103384/ant-warning-includeantruntime-was-not-set-->
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
     </target>
 
     <!-- Run the program -->
