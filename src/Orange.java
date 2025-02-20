@@ -1,6 +1,9 @@
 /**
  * Orange is processed by plant
  * An orange can be in different states like Fetched, Peeled, Squeezed, Bottled, and Processed.
+ * <p>
+ * ****NOTE: Javadocs for the orange class only were created by AI -- I wanted "properly" formatted
+ * javadocs for the methods to base my worker and plant (the classes I actually wrote) javadocs off of
  */
 public class Orange {
 
@@ -12,11 +15,9 @@ public class Orange {
 
         // Peeled and Squeezed take roughly twice as long as Fetched and Bottled so they will be bottlenecks in our plant
 
-        Fetched(15),
-        Peeled(38), // Peeled takes more than twice as much time as fetched
+        Fetched(15), Peeled(38), // Peeled takes more than twice as much time as fetched
         Squeezed(29), // Squeezed takes a long time too
-        Bottled(17),
-        Processed(1);
+        Bottled(17), Processed(1);
 
         private static final int finalIndex = State.values().length - 1;
 

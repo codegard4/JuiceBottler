@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * various juice bottling tasks. A juice bottler has one specific job (i.e. to "peel" or "squeeze").
  * At the end of the juice bottling day the number of bottles bottled, oranges wasted and oranges processed is
  * printed to the screen.
+ * These javadocs hopefully look AI generated and professional, but they were created by yours truly
  */
 public class Plant implements Runnable {
     // how long do we want to run the juice processing
@@ -61,8 +62,7 @@ public class Plant implements Runnable {
         delay(100, "Waiting to summarize results");
         System.out.println("Total provided/processed = " + totalProvided + "/" + totalProcessed);
         System.out.println();
-        System.out.println("Created " + totalBottles +
-                " bottles, wasted " + totalWasted + " oranges");
+        System.out.println("Created " + totalBottles + " bottles, wasted " + totalWasted + " oranges");
         System.out.println();
     }
 

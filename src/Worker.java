@@ -5,6 +5,7 @@ import java.util.concurrent.BlockingQueue;
  * Workers work in a juice bottler plant
  * A worker takes a queue of oranges to complete a task on, does work with the orange, and puts the orange in a "Processed" queue
  * Workers work until they are told to stop working, which is controlled in the plant class
+ * These javadocs hopefully look AI generated and professional, but they were created by yours truly
  */
 
 public class Worker implements Runnable {
