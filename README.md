@@ -15,11 +15,17 @@ Workers are created in groups of 6, with multiple workers created to Peel and Sq
 ### How to Run
 
 First, clone the git repository  
-```git clone https://github.com/codegard4/JuiceBottler```
+``` bash
+git clone https://github.com/codegard4/JuiceBottler
+```
 
 To run the project simply install Ant, open a terminal and run the following command:  
-    ```ant clean run```
+``` bash
+ant clean run 
+```
   
 OR navigate to src/, and run the following command:  
-    ```java Plant.java```  
+``` bash
+java Plant.java
+```  
 
