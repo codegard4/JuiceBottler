@@ -60,6 +60,7 @@ public class Plant implements Runnable {
         }
         // add a 1 second delay so that the results are neatly summarized at the bottom of the output
         delay(100, "Waiting to summarize results");
+        System.out.println();
         System.out.println("Total fetched oranges: " + totalProvided);
         System.out.println("Total processed oranges: " + totalProcessed);
         System.out.println();
@@ -131,16 +132,19 @@ public class Plant implements Runnable {
      */
     public void stopPlant() {
         // stop all the workers
-        timeToWork = false;
         for (Worker w : workers) {
             w.stopWork();
         }
+        timeToWork = false;
     }
 
     /**
      * Try to join threads
      */
     public void waitToStop() {
+        for(Worker w: workers) {
+            w.waitToStop();
+        }
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -160,7 +164,6 @@ public class Plant implements Runnable {
                 fetchQueue.add(orange);
             }
         }
-        System.out.println();
         System.out.println(Thread.currentThread().getName() + " Done");
     }
 

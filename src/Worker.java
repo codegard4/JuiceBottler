@@ -13,8 +13,8 @@ public class Worker implements Runnable {
     // each thread represents 1 worker completing their juice bottling tasks
     private final Thread thread;
     // here is the queue of oranges they get and the queue they send the processed oranges to
-    private BlockingQueue<Orange> orangesToProcess;
-    private BlockingQueue<Orange> orangesProcessed;
+    private final BlockingQueue<Orange> orangesToProcess;
+    private final BlockingQueue<Orange> orangesProcessed;
     private volatile boolean timeToWork;
 
     /**
@@ -50,12 +50,22 @@ public class Worker implements Runnable {
     }
 
     /**
+     * Try to join threads
+     */
+    public void waitToStop() {
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            System.err.println(thread.getName() + " stop malfunction");
+        }
+    }
+
+    /**
      * Take an orange from the queue of oranges to process if there are oranges and process it. Put the processed orange in the output queue
      * Do not grab the same orange as another worker with the same process
      */
     public synchronized void run() {
         while (timeToWork) {
-//            System.out.println(job + "ing Being done");
             try {
                 if (!orangesToProcess.isEmpty()) {
                     Orange orange = orangesToProcess.remove(); // remove or wait until you can get an orange
